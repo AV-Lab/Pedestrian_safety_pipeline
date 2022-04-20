@@ -45,6 +45,9 @@ We predict the bounding box coordinate trajectory for first-person (ego-centric)
 Test on PIE dataset:
 ```
 python tools/test.py --config_file configs/bitrap_np_PIE.yml CKPT_DIR **DIR_TO_CKPT**
+### python test.py --config_file configs/bitrap_np_PIE.yml CKPT_DIR PIE/bitrap_np_K_20.pth
+
+# batch size can be changed on datasets init make dataloader ....for eval check trainier.py in engine
 python tools/test.py --config_file configs/bitrap_gmm_PIE.yml CKPT_DIR **DIR_TO_CKPT**
 ```
 
@@ -60,6 +63,8 @@ python tools/test.py --config_file configs/bitrap_np_ETH.yml DATASET.NAME **NAME
 python tools/test.py --config_file configs/bitrap_gmm_ETH.yml DATASET.NAME **NAME_OF_DATASET** CKPT_DIR **DIR_TO_CKPT**
 ```
 
+### env 
+conda activate BiTraP_env
 ## Citation
 
 If you found the repo is useful, please feel free to cite our papers:
@@ -71,3 +76,5 @@ If you found the repo is useful, please feel free to cite our papers:
   year={2020}
 }
 ```
+
+

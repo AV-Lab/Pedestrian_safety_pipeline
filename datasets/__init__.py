@@ -37,7 +37,7 @@ def make_dataset(cfg, split):
 
 def make_dataloader(cfg, split='train', logger=None):
     if split == 'test':
-        batch_size = cfg.TEST.BATCH_SIZE
+        batch_size = 64 #cfg.TEST.BATCH_SIZE
     else:
         batch_size = cfg.SOLVER.BATCH_SIZE
     dataloader_params ={
@@ -48,7 +48,11 @@ def make_dataloader(cfg, split='train', logger=None):
             }
     
     dataset = make_dataset(cfg, split)
+    #print("dataset state: ---------------------------------------------------------------------------------------------",len(dataset.dataset))
+    # print("dataset 2: ---------------------------------------------------------------------------------------------",dataset.dataset[0][2])
+    # print("dataset  data: ---------------------------------------------------------------------------------------------",dataset.dataset[0][1][-1, :2])
     dataloader = DataLoader(dataset, **dataloader_params)
+    print("dataloader type: ---------------------------------------------------------------------------------------------",type(dataloader))
     if hasattr(logger, 'info'):
         logger.info("{} dataloader: {}".format(split, len(dataloader)))
     else:

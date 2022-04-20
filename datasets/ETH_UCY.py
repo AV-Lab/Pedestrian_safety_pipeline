@@ -41,8 +41,10 @@ class ETHUCYDataset(data.Dataset):
         else:
             raise ValueError()
         train_env = dill.load(f, encoding='latin1')
+        #print("---------------------------------------------------------------- cfg.DATASET.NAME  : " ,( cfg.DATASET.NAME),"--------------------------------")
         
         node_type=train_env.NodeType[0]
+        print("----------------------------------------------------------------Node type: " ,(node_type),"--------------------------------")
         train_env.attention_radius[(node_type, node_type)] = 3.0 #10.0
         augment = False
         if split=='train':
@@ -81,7 +83,7 @@ class ETHUCYDataset(data.Dataset):
         print("obs dist mu/sigma: {:.2f}/{:.2f}, obs vel mu/sigma: {:.2f}/{:.2f}, pred dist mu/sigma: {:.2f}/{:.2f}, pred vel mu/sigma: {:.2f}/{:.2f}".format(\
                 all_obs_distance.mean(), all_obs_distance.std(), all_obs_vel.mean(), all_obs_vel.std(),
                 all_pred_distance.mean(), all_pred_distance.std(), all_pred_vel.mean(), all_pred_vel.std()))
-        
+
     def __len__(self):
         return len(self.dataset)
     
@@ -124,6 +126,7 @@ class NodeTypeDataset(data.Dataset):
         self.index = self.index_env(node_freq_mult, scene_freq_mult, **kwargs)
         self.len = len(self.index)
         self.edge_types = [edge_type for edge_type in env.get_edge_types() if edge_type[0] is node_type]
+   
     def index_env(self, node_freq_mult, scene_freq_mult, **kwargs):
         index = list()
         

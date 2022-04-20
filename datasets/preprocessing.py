@@ -86,8 +86,12 @@ def get_node_timestep_data(env, scene, t, node, state, pred_state,
     first_history_index = (max_ht - node.history_points_at(t)).clip(0)
     _, std = env.get_standardize_params(state[node.type], node.type)
     std[0:2] = env.attention_radius[(node.type, node.type)] #3 #
+    # print("state node type: ",state[node.type], "   node type: ",node.type)
+    # print(" STD IS : " , std)
     rel_state = np.zeros_like(x[0])
     rel_state[0:2] = np.array(x)[-1, 0:2]
+    # print(" rel_state IS : " , rel_state)
+    # print(" XXXXXX IS : " , x)
     x_st = env.standardize(x, state[node.type], node.type, mean=rel_state, std=std)
     if list(pred_state[node.type].keys())[0] == 'position':  # If we predict position we do it relative to current pos
         y_st = env.standardize(y, pred_state[node.type], node.type, mean=rel_state[0:2])

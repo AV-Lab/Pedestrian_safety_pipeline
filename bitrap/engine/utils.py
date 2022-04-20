@@ -69,8 +69,10 @@ def viz_results(viz,
 
 def post_process(cfg, X_global, y_global, pred_traj, pred_goal=None, dist_traj=None, dist_goal=None):
     '''post process the prediction output'''
+   
     if len(pred_traj.shape) == 4:
         batch_size, T, K, dim = pred_traj.shape
+
     else:
         batch_size, T, dim = pred_traj.shape
     X_global = X_global.detach().to('cpu').numpy()
@@ -86,6 +88,7 @@ def post_process(cfg, X_global, y_global, pred_traj, pred_goal=None, dist_traj=N
         dist_goal.to('cpu')
         dist_goal.squeeze(1)
     if dim == 4:
+        # print("--------------------------------dim == 4--------------------------------")
         # BBOX: denormalize and change the mode
         _min = np.array(cfg.DATASET.MIN_BBOX)[None, None, :] # B, T, dim
         _max = np.array(cfg.DATASET.MAX_BBOX)[None, None, :]
@@ -95,13 +98,16 @@ def post_process(cfg, X_global, y_global, pred_traj, pred_goal=None, dist_traj=N
             pred_traj = pred_traj * (_max - _min) + _min
             y_global = y_global * (_max - _min) + _min
             X_global = X_global * (_max - _min) + _min
+            # print("--------------------------------zero-one initiated!--------------------------------")
         elif cfg.DATASET.NORMALIZE == 'plus-minus-one':
             if pred_goal is not None:
                 pred_goal = (pred_goal + 1) * (_max - _min)/2 + _min
             pred_traj = (pred_traj + 1) * (_max[None,...] - _min[None,...])/2 + _min[None,...]
             y_global = (y_global + 1) * (_max - _min)/2 + _min
             X_global = (X_global + 1) * (_max - _min)/2 + _min
+
         elif cfg.DATASET.NORMALIZE == 'none':
+
             pass
         else:
             raise ValueError()
@@ -137,4 +143,5 @@ def post_process(cfg, X_global, y_global, pred_traj, pred_goal=None, dist_traj=N
 
             dist_traj = GMM4D.from_log_pis_mus_cov_mats(dist_traj.input_log_pis, traj_mus, traj_cov)
             dist_goal = GMM4D.from_log_pis_mus_cov_mats(dist_goal.input_log_pis, goal_mus, goal_cov)
+ 
     return X_global, y_global, pred_goal, pred_traj, dist_traj, dist_goal

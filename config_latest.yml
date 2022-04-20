@@ -1,0 +1,8 @@
+# SAFETY MEASURES 
+
+safe_distance : 2      # safe distance
+frame_rate : 30      
+max_cross_detection : 10     # maximum distance where crossing path is relavant 
+safe_color : [0, 255, 0]
+crossing_color : [255, 0, 0]
+danger_color : [0, 0, 255]

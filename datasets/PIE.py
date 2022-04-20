@@ -56,10 +56,10 @@ class PIEDataset(data.Dataset):
         pred_bbox = torch.FloatTensor(self.data['pred_bbox'][index])
         cur_image_file = self.data['obs_image'][index][-1]
         pred_resolution = torch.FloatTensor(self.data['pred_resolution'][index])
-        flow_input = torch.FloatTensor(self.data['flow_input'][index])
+        # flow_input = torch.FloatTensor(self.data['flow_input'][index])
 
-        ret = {'input_x':obs_bbox, 'flow_input':flow_input,
-               'target_y':pred_bbox, 'cur_image_file':cur_image_file}
+        ret = {'input_x':obs_bbox, 
+               'target_y':pred_bbox, 'cur_image_file':cur_image_file}#'flow_input':flow_input,
         
         ret['timestep'] = int(cur_image_file.split('/')[-1].split('.')[0])
         
@@ -102,16 +102,16 @@ class PIEDataset(data.Dataset):
         d['flow'] = []
         num_trks = len(d['image'])
         traj_root = self.cfg.DATASET.TRAJECTORY_PATH
-        for images, pids in zip(d['image'], d['pid']):
-            sid = images[0].split('/')[-3]
-            vid = images[0].split('/')[-2]
-            pid = pids[0][0]
-            traj_name = sid + '_' + vid + '_' + pid
-            traj_path = os.path.join(traj_root, traj_name+'.pkl')
-            traj = pkl.load(open(traj_path, 'rb'))
-            if len(traj['flow']) != len(images):
-                pdb.set_trace()
-            d['flow'].append(traj['flow'])
+        # for images, pids in zip(d['image'], d['pid']):
+        #     sid = images[0].split('/')[-3]
+        #     vid = images[0].split('/')[-2]
+        #     pid = pids[0][0]
+        #     traj_name = sid + '_' + vid + '_' + pid
+        #     traj_path = os.path.join(traj_root, traj_name+'.pkl')
+        #     traj = pkl.load(open(traj_path, 'rb'))
+        #     if len(traj['flow']) != len(images):
+        #         pdb.set_trace()
+        #     d['flow'].append(traj['flow'])
 
         #  Sample tracks from sequneces
         for k in d.keys():

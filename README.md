@@ -1,4 +1,7 @@
-# For indepth information about the trajectory prediction procedure see the documentation on README_OLD.md
+# Reference
+- This is code is based on bitrap trajectory prediction produced by Yu Yao and et al. (https://github.com/umautobots/bidireaction-trajectory-prediction)
+- In this task we are using the bitrap np model trained on ETH dataset
+- For more info refere to README_OLD.md
 
 # Process (inference in trainer.py):
 

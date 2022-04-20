@@ -1,80 +1,32 @@
-# BiTraP: Bi-directional Pedestrian Trajectory Prediction with Multi-modal Goal Estimation
-Yu Yao, Ella Atkins, Matthew Johnson-Roberson, Ram Vasudevan and Xiaoxiao Du
+# For indepth information about the trajectory prediction procedure see the documentation on README_OLD.md
 
-This repo contains the code for our paper:[BiTraP: Bi-directional Pedestrian Trajectory Prediction with Multi-modal Goal Estimation](https://arxiv.org/abs/2007.14558).
+# Process (inference in trainer.py):
 
-Our BiTraP-NP network architecture:
+- step 1: detect pedestrians via zed camera
+- step 2: save the postion and velocity of each pedestrian and save history of the last 8 data points (save the bounding box and distance from the camera as well)
+- step 3: calculate the acceleration of each pedestrian and add it to the person history
+- step 4: Each time a person is detected in 3 or more consecutive frames, predict future trajectory
+- step 5: Since the prediction is multimodal, select one (usually first prediction)
+- step 6: if the distance between the camera and the person is smaller than the threshold for safety distance --> RED bounding box is shown
+else if the person is not crossing the path of the camera and  is in the range of max_detection for crossing ---> Blue bounding box is shown
+if neither of teh above cases are true then it is assumed that the person is safe ----> Green bounding
 
-<img src="figures/bitrap_np.png" width="800">
+path-crossing : we assume a person is crossing the path of the camera if the predicted trajectory is passes through the straight path of the camera (z-axis for zed camera)
+max_cross_detection : is the max distance to consider a person as crossing the path. Beyond this point even if a person is crossing, they are considered to be safe.
 
-Our BiTraP-GMM decoder architecture:
+max_cross_detection and other parameters such as threshold for safe distance, frame rate, color of the bounding boxs can be changed from config_latest.yml
 
-<img src="figures/bitrap_gmm.png" width="600">
+ 
 
-## Installation
-### Dependencies
-Our code was implemented using python and pytorch and tested on a desktop computer with Intel Xeon 2.10GHz CPU, NVIDIA TITAN X GPU and 128 GB memory.
+# ENV SET UP
+TO set up the enironment for the system use the following code:
+conda env create -f environment.yml
 
-* NVIDIA driver >= 418
-* Python >= 3.6
-* pytorch == 1.4.1 with GPU support (CUDA 10.1 & cuDNN 7)
+# TO change config files:
+config_latest.yml
 
-Run following command to add bitrap path to the PYTHONPATH
+# To RUN the code use the following command:
+python test.py
 
-  cd bidireaction-trajectory-prediction
-  export PYTHONPATH=$PWD:PYTHONPATH
-
-One can also use docker with `docker/Dockerfile`. 
-
-## Training
-Users can train the BiTraP models on JAAD, PIE or ETH-UCY dataset easily by runing the following command:
-```
-python tools/train.py --config_file **DIR_TO_THE_YML_FILE** 
-```
-To train on [JAAD](http://data.nvision2.eecs.yorku.ca/JAAD_dataset/) or [PIE](http://data.nvision2.eecs.yorku.ca/PIE_dataset/) dataset, the users need to download the dataset from their original webpage and follow their directions to extract pedestrian trajectory files ('.pkl'). The trajectories should locate at the `DATASET.TRAJECTORY_PATH` in the configuration file.
-
-To train on ETH-UCY dataset, the users can download the trajectory files ('.pkl') from the [Trajectron++](https://github.com/StanfordASL/Trajectron-plus-plus) repo and put them at the `DATASET.TRAJECTORY_PATH` in the configuration file.
-
-To train/inferece on CPU or GPU, simply add `DEVICE='cpu'` or  `DEVICE='cuda'`. By default we use GPU for both training and inferencing.
-
-## Inference 
-The checkpoints of our models trained on JAAD, PIE and ETH-UCY can be downloaded [here](https://drive.google.com/drive/folders/1MF-E6Td2BRizNrvIFcfsOl0LV2_BDQXB?usp=sharing).
-
-### Bounding box trajectory prediction on JAAD and PIE
-We predict the bounding box coordinate trajectory for first-person (ego-centric) view JAAD and PIE datasets.
-Test on PIE dataset:
-```
-python tools/test.py --config_file configs/bitrap_np_PIE.yml CKPT_DIR **DIR_TO_CKPT**
-### python test.py --config_file configs/bitrap_np_PIE.yml CKPT_DIR PIE/bitrap_np_K_20.pth
-
-# batch size can be changed on datasets init make dataloader ....for eval check trainier.py in engine
-python tools/test.py --config_file configs/bitrap_gmm_PIE.yml CKPT_DIR **DIR_TO_CKPT**
-```
-
-Test on JAAD dataset:
-```
-python tools/test.py --config_file configs/bitrap_np_JAAD.yml CKPT_DIR **DIR_TO_CKPT**
-python tools/test.py --config_file configs/bitrap_gmm_JAAD.yml CKPT_DIR **DIR_TO_CKPT**
-```
-### Point trajectory prediction on ETH-UCY
-We predict the point coordinate trajectory for bird's-eye view ETH-UCY datasets.
-```
-python tools/test.py --config_file configs/bitrap_np_ETH.yml DATASET.NAME **NAME_OF_DATASET** CKPT_DIR **DIR_TO_CKPT**
-python tools/test.py --config_file configs/bitrap_gmm_ETH.yml DATASET.NAME **NAME_OF_DATASET** CKPT_DIR **DIR_TO_CKPT**
-```
-
-### env 
-conda activate BiTraP_env
-## Citation
-
-If you found the repo is useful, please feel free to cite our papers:
-```
-@article{yao2020bitrap,
-  title={BiTraP: Bi-directional Pedestrian Trajectory Prediction with Multi-modal Goal Estimation},
-  author={Yao, Yu and Atkins, Ella and Johnson-Roberson, Matthew and Vasudevan, Ram and Du, Xiaoxiao},
-  journal={arXiv preprint arXiv:2007.14558},
-  year={2020}
-}
-```
 
 
